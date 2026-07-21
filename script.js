@@ -12,6 +12,15 @@ const transferHolder = document.querySelector('#transferHolder');
 const taxId = document.querySelector('#taxId');
 const taxIdError = document.querySelector('#taxIdError');
 const formMessage = document.querySelector('#formMessage');
+const branchSelect = document.querySelector('#branch');
+const submitOrder = document.querySelector('#submitOrder');
+
+branchSelect.addEventListener('change', () => {
+  const selectedBranch = branches[branchSelect.value];
+  submitOrder.textContent = selectedBranch
+    ? `Enviar pedido a ${selectedBranch.name} por WhatsApp`
+    : 'Enviar mi pedido por WhatsApp';
+});
 
 payment.addEventListener('change', () => {
   const isTransfer = payment.value === 'Transferencia';
@@ -54,8 +63,8 @@ form.addEventListener('submit', (event) => {
 
   const data = new FormData(form);
   const selectedBranch = branches[data.get('branch')];
-  const transferText = data.get('payment') === 'Transferencia' ? `\n🏦 *Titular de la transferencia:* ${data.get('transferHolder')}` : '';
+  const transferText = data.get('payment') === 'Transferencia' ? `\n*Titular de la transferencia:* ${data.get('transferHolder')}` : '';
   const offersText = data.get('offers') ? 'Sí, deseo recibir novedades' : 'No';
-  const message = `🛒 *SOLICITUD DE PEDIDO DESDE LA WEB*\n\n👤 *Cliente:* ${data.get('customerName')}\n🪪 *CUIT/CUIL:* ${taxId.value}\n🧾 *Tipo de compra:* ${data.get('customerType')}\n🏪 *Sucursal:* ${selectedBranch.name}\n\n📦 *Pedido:*\n${data.get('orderDetail')}\n\n💳 *Pago preferido:* ${data.get('payment')}${transferText}\n🔔 *Recibir ofertas:* ${offersText}\n\nAguardo confirmación de disponibilidad, precio final y horario de retiro. Entiendo que no debo transferir hasta recibir los datos oficiales de la sucursal.`;
+  const message = `*SOLICITUD DE PEDIDO DESDE LA WEB*\n\n*Cliente:* ${data.get('customerName')}\n*CUIT/CUIL:* ${taxId.value}\n*Tipo de compra:* ${data.get('customerType')}\n*Sucursal:* ${selectedBranch.name}\n\n*PEDIDO:*\n${data.get('orderDetail')}\n\n*Pago preferido:* ${data.get('payment')}${transferText}\n*Recibir ofertas:* ${offersText}\n\nAguardo confirmación de disponibilidad, precio final y horario de retiro. Entiendo que no debo transferir hasta recibir los datos oficiales de la sucursal.`;
   window.open(`https://wa.me/${selectedBranch.phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
 });
